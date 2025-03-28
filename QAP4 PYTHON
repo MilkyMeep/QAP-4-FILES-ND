@@ -1,0 +1,186 @@
+# Description: One Stop insurance Company
+# Author: Nathan Dawson
+# Date(s): 2025-03-24
+
+
+# Define required libraries.
+import datetime
+import FormatValues as FV
+
+# Define program constants.
+CURDATE = datetime.datetime.now()
+PolNum = 1944
+BasPrem = 869.00
+AddDisc = .25
+LiabCov = 130.00
+GlassCov = 86.00
+LoanerCarCov = 58.00
+HST = .15
+MonthProFee = 39.99
+
+
+# Define program functions.
+def GetPayDue(InvoiceDate):
+    Pay20Date = InvoiceDate + datetime.timedelta(days=20)
+    PurYear = InvoiceDate.year
+    PurMonth = InvoiceDate.month
+    Purday = InvoiceDate
+
+    PayYear = PurYear
+    PayMonth = PurMonth + 1
+    if PayMonth == 13:
+        PayMonth -= 12
+        PayYear += 1
+    Payday = 1
+    PayFirstDate = datetime.datetime(PayYear, PayMonth, Payday)
+
+    if Pay20Date > PayFirstDate:
+        PayDate = Pay20Date
+    else:
+        PayDate = PayFirstDate
+
+    return PayDate
+    
+
+
+
+
+
+# Main program starts here.
+while True:
+    
+    # Gather user inputs.
+    FName = input("Enter The Customers First Name:                                   ").upper()
+    
+    LName = input("Enter The Customers Last Name:                                    ").upper()
+
+    CustAddy = input("Enter The Customers Address:                                   ")
+
+    CustCity = input("Enter The Customers City:                                      ") 
+    
+
+
+    ProvList = {"AB","BC","MB","NB","NL","NT","NS","NU","ON","PE","QC","SK","YT"}
+    while True:
+        Province = input("Enter The Customers Province Abbrev (Ex: NL / AB / BC):    ").upper()
+        if Province not in  ProvList:
+            print()
+            print("Data Entry Error - Province Abbrev Entered Is Invalid.            ")
+            print()
+        else:
+            break
+
+    CustPost = input("Enter The Customers Postal Code:                               ").upper()
+
+    CustPhoneNum = input("Enter The Customers Phone Number:                          ")
+    
+    InsurCars = int(input("Enter The Number Of Cars Being Insured:                      "))
+
+    while True:
+        OptGlassCov = input("Optional Glass Coverage Y/N:                            ").upper()
+        if OptGlassCov == "Y":
+            OptGlassCov = GlassCov
+        else: 
+            OptGlassCov = 0
+        break
+    while True:
+        OptLoanCar = input("Optional Loaner Car Y/N:                                 ").upper()
+        if OptLoanCar == "Y":
+            OptLoanCar = LoanerCarCov
+        else:
+            OptLoanCar = 0
+        break
+    
+    PayStrList = {"F","M","D"}
+    
+    while True:
+        PayStr = input("Enter Wether Paying in Full, Monthly Or Down F/M/D:          ").upper()
+        if PayStr not in PayStrList:
+            print()
+            print("Data Entry Error - Payment Structure Entered Is Invalid.          ")
+            print()
+        else:
+            break
+        if PayStr =="D":
+            DownPay = input("Enter The Amount Of The Down Payment:                   ")
+        elif PayStr == "F" or PayStr == "M":
+            DownPay = 0 
+        break
+    ClaimDate = (input("Enter The Claim Date XXXX-XX-XX:                              "))
+    ClaimAMT = float(input("Enter The Claim Amount Of All Claims:                          "))
+
+
+
+
+    
+
+
+
+
+
+
+
+
+# Perform required calculations.
+    while True:
+        if InsurCars > 1:
+         DiscCalc = InsurCars * BasPrem - 869.00
+         DiscCalc2 = DiscCalc * AddDisc + 869.00
+        else:
+         DiscCalc = InsurCars * BasPrem
+         DiscCalc2 = DiscCalc
+         break
+        TotLiabCost = InsurCars * LiabCov
+        TotGlassCost = OptGlassCov * InsurCars
+        TotLoanerCov = LoanerCarCov * InsurCars
+        TotExtraCost = TotLiabCost + TotGlassCost + TotLoanerCov
+        TotInsuPrem = DiscCalc2 + TotExtraCost
+        HSTTOT = HST * TotInsuPrem
+        TotalCost = HSTTOT + TotInsuPrem
+        
+        while True:
+            MonthlyCost = TotalCost + 39.99 - DownPay  / 8
+            InvoiceDate = datetime.datetime.now()
+
+
+    
+
+
+
+
+    # Display results
+    print (f"Claim  #              Claim Date                    Amount                    ")
+    print (f"-------------------------------------------------------------                 ")
+    print (f"  {PolNum}                {(ClaimDate)}              {FV.FDollar0(ClaimAMT)}  ")   
+    print (f"  {PolNum}                {(ClaimDate)}              {FV.FDollar0(ClaimAMT)}  ")
+    print (f"  {PolNum}                {(ClaimDate)}              {FV.FDollar0(ClaimAMT)}  ") 
+
+    # Write the values to a data file for storage.
+    f = open("Polices.dat","a")
+    f.write(f"{PolNum},")
+    f.write(f"{FName},")
+    f.write(f"{LName},")
+    f.write(f"{Province},")
+    f.write(f"{CustAddy},")
+    f.write(f"{CustCity},")
+    f.write(f"{CustPhoneNum},")
+    f.write(f"{ClaimDate}")
+    f.write(f"{InsurCars}")
+    ClaimAMT =round(ClaimAMT,2)
+    f.write(f"{str(ClaimAMT)}\n")
+
+    f.close()
+
+
+
+    PolNum += 1 
+
+
+
+
+    Continue = input("Would you like to process another claim?  Y/N:                 ").upper()
+    if Continue == "N":
+        break
+
+  #Any housekeeping duties at the end of the program.
+       
